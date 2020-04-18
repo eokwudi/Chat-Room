@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <script>
+            // Set starting value of counter to 0
+        $(document).ready(function(){
+      //  localStorage.removeItem('user');
+         var form = $('form').on('submit', function(e) {
+           var str = $.trim($('input.message').val());
+           if (str.length == 0 && !localStorage.getItem('user')) {
+             $("#press").attr("disabled", true);
+             alert('enter a valid name');
+             $("#press").attr("disabled", false);
+             return false;
+           }
+
+           let identity = $('input.message').val();
+           localStorage.setItem('user', identity);
+           alert('name created');
+           return true;
+         });
+
+       });
+
+         function create() {
+           if(!localStorage.getItem('user')) {
+             alert('no bueno');
+             return false;
+           }
+           else {
+             window.location.assign("/transfer");
+           }
+         }
+
+         function explore() {
+           if(!localStorage.getItem('user')) {
+             return false;
+           }
+           else {
+             window.location.assign("/list");
+           }
+         }
+
+         function private() {
+           if(!localStorage.getItem('user')) {
+             alert("nah")
+             return false;
+           }
+           else {
+             window.location.assign("/proxy");
+           }
+         }
+
+        </script>
+        <title>My Website</title>
+    </head>
+    <body>
+        <h1 id="name_1">Welcome {{title}}</h1>
+        <form action="{{url_for('index')}}" method="post">
+          <input type="text" class="message" placeholder="Enter Username" name="username">
+          <button type = "submit" id = "press">Submit</button>
+          </form>
+        <button id="create" onclick = "create()">Create</button>
+        <button id="explore" onclick = "explore()">Explore</button>
+        <button id="private" onclick="private()">Private</button>
+    </body>
+</html>

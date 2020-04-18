@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+      <script>
+      var socket;
+      $(document).ready(function() {
+      socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + '/private');
+      socket.on('connect', function() {
+        socket.emit('entered', {});
+      });
+
+      socket.on('status', function(data) {
+        $('div.message').append('<div><b style="color: #000">'+data.text+'</div>');
+      });
+
+      var form = $('form').on('submit', function(e) {
+          var str = $.trim($('input.message').val());
+          if (str.length == 0) {
+            $("#press").attr("disabled", true);
+          }
+          e.preventDefault();
+          let message = $('input.message').val();
+          socket.emit('my message', {
+            msg: message
+          });
+          $('input.message').val('').focus();
+      });
+
+      socket.on('my response', function(data) {
+        alert(data.text)
+        console.log(data.text);
+        $('h3').remove();
+        $('div.message').append('<div>'+data.text+'</div>');
+      });
+    });
+
+    function exit () {
+      socket.on('left', {}, function() {
+        socket.disconnect();
+
+      window.location.href = "{{url_for('list')}}"
+    });
+  }
+      </script>
+
+        <title>Private Chat</title>
+    </head>
+    <body>
+        <h1>{{space}}</h1>
+        <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+        <div class ="message"></div>
+        <form action="" method = "post">
+          <input type="text" class="message" placeholder="Messages"/>
+          <input type="submit"/>
+          </form>
+        <button onclick="exit()">Leave</button>
+    </body>
+</html>
